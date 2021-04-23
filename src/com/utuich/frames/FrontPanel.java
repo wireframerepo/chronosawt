@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,14 +21,20 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	private static JLabel chronoFace = new JLabel();
+	private static JLabel logoImage = new JLabel();
 	private JButton starterButton = new JButton("Start");
 	private JButton stopButton = new JButton("Stop");
 	public static Chronos chrono = new Chronos(false);
 	
 	public FrontPanel() {
 		this.setBackground(new Color(0,0,0));
-		this.setSize(400, 200);
+		this.setSize(400, 250);
 		this.setLayout(null);
+		
+		logoImage.setBackground(new Color(255,255,255));
+		logoImage.setOpaque(true);
+		logoImage.setBounds(150,20,85,40);
+		logoImage.setIcon(new ImageIcon("src/doncotech1.jpg"));
 		
 		chronoFace.setForeground(new Color(0,255,0));
 		chronoFace.setText("00:00:00");
@@ -36,13 +43,13 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 		chronoFace.setBackground(new Color(0,0,0));
 		chronoFace.setBounds(7, 60, 400, 60);
 		
-		starterButton.setBounds(80, 140, 100, 40);
+		starterButton.setBounds(80, 160, 100, 40);
 		starterButton.setOpaque(true);
 		starterButton.setBackground(new Color(0,0,0));
 		starterButton.setForeground(new Color(0,255,0));
 		starterButton.setActionCommand("_STARTER_");
 		
-		stopButton.setBounds(220, 140, 100, 40);
+		stopButton.setBounds(220, 160, 100, 40);
 		stopButton.setOpaque(true);
 		stopButton.setBackground(new Color(0,0,0));
 		stopButton.setForeground(new Color(0,255,0));
@@ -54,24 +61,59 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 		this.add(starterButton);
 		this.add(stopButton);
 		
-		
+		this.add(logoImage);
 		this.add(chronoFace);
-		
-		
-		
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println(e.getActionCommand());
+		//for the time being a chronos action will be here for up time
+		//System.out.println(e.getActionCommand());
+		
+		final String command = e.getActionCommand();
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// ALL HAIL KING MARMOTH!
+				//this is a super jank setup, expect to improve the chronos execution chain
+				
+				if(command.equalsIgnoreCase("_STARTER_")) {
+					chrono.setChronoStopSignal(false);
+				}
+				
+				if(command.equalsIgnoreCase("_STOPPER_")) {
+					chrono.setChronoStopSignal(true);
+				}
+				
+				while(!chrono.isChronoStopSignal()) {
+
+					try {
+						chrono.increment();
+						chronoFace.setText(chrono.showTimer());
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		}).start();
+		
+
+		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("make the changing form for this times");
-		System.out.println(e.getComponent());
-		
+		// YOU HAVE BEEN TOUCHED BY AN ANGEL!
+		// System.out.println("make the changing form for this times");
+		// System.out.println(e.getComponent());
+		if(chrono.isChronoStopSignal()) {
+		    chronoFace.setText(chrono.resetTimer());
+		}
 	}
 
 	@Override
@@ -97,8 +139,4 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
-	
-
 }

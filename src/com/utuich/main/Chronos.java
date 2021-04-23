@@ -130,6 +130,15 @@ public class Chronos {
 		}
 	}
 	
+	public String resetTimer() {
+		this.secs = 0;
+		this.mins = 0;
+		this.hours = 0;
+		this.days = 0;
+		return showTimer();
+	}
+	
+	
 	private String processString(int number) {
 		if(number<10) {
 			return "0"+number;
