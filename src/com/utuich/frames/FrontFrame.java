@@ -15,7 +15,7 @@ public class FrontFrame extends JFrame{
 	private Chronos chron;
 	
 	public FrontFrame() {
-		this.setSize(400, 250);
+		this.setSize(415, 250);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setResizable(false);
 		this.setLayout(null);

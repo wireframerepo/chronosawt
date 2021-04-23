@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,17 +25,19 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 	private static JLabel logoImage = new JLabel();
 	private JButton starterButton = new JButton("Start");
 	private JButton stopButton = new JButton("Stop");
+	private URL url;
 	public static Chronos chrono = new Chronos(false);
 	
 	public FrontPanel() {
 		this.setBackground(new Color(0,0,0));
-		this.setSize(400, 250);
+		this.setSize(415, 250);
 		this.setLayout(null);
 		
 		logoImage.setBackground(new Color(255,255,255));
 		logoImage.setOpaque(true);
 		logoImage.setBounds(150,20,85,40);
-		logoImage.setIcon(new ImageIcon("src/doncotech1.jpg"));
+		URL url = getClass().getResource("/images/doncotech1.jpg");
+		logoImage.setIcon(new ImageIcon(url));
 		
 		chronoFace.setForeground(new Color(0,255,0));
 		chronoFace.setText("00:00:00");
@@ -48,12 +51,14 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 		starterButton.setBackground(new Color(0,0,0));
 		starterButton.setForeground(new Color(0,255,0));
 		starterButton.setActionCommand("_STARTER_");
+		starterButton.setEnabled(true);
 		
 		stopButton.setBounds(220, 160, 100, 40);
 		stopButton.setOpaque(true);
 		stopButton.setBackground(new Color(0,0,0));
 		stopButton.setForeground(new Color(0,255,0));
 		stopButton.setActionCommand("_STOPPER_");
+		stopButton.setEnabled(false);
 		
 		starterButton.addActionListener(this);
 		stopButton.addActionListener(this);
@@ -72,6 +77,7 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 		
 		final String command = e.getActionCommand();
 		
+		
 		new Thread(new Runnable() {
 			
 			@Override
@@ -81,10 +87,14 @@ public class FrontPanel extends JPanel implements ActionListener, MouseListener{
 				
 				if(command.equalsIgnoreCase("_STARTER_")) {
 					chrono.setChronoStopSignal(false);
+					stopButton.setEnabled(true);
+					starterButton.setEnabled(false);
 				}
 				
 				if(command.equalsIgnoreCase("_STOPPER_")) {
 					chrono.setChronoStopSignal(true);
+					stopButton.setEnabled(false);
+					starterButton.setEnabled(true);
 				}
 				
 				while(!chrono.isChronoStopSignal()) {
